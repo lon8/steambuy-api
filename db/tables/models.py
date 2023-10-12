@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, create_engine
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 from datetime import datetime
 from decouple import config
 
@@ -25,6 +26,7 @@ class Bot(Base):
 
     id = Column(Integer, primary_key=True)
     steam_id = Column(String(32), unique=True, nullable=False)
+    steam_api_key = Column(String(64), unique=True)
     balance = Column(Integer, default=10000)
 
 class Operation(Base):
@@ -33,5 +35,14 @@ class Operation(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, nullable=False)
     opcode = Column(String(64), nullable=False)
+    
+class Session(Base):
+    __tablename__ = 'sessions'
+    
+    id = Column(Integer, primary_key=True)
+    sid = Column(Integer, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))  # Связываем с таблицей users
+
+    user = relationship('User', backref='sessions')  
 
 Base.metadata.create_all(bind=engine)
