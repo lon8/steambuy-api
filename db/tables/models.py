@@ -19,6 +19,7 @@ class User(Base):
     password = Column(String(64), nullable=False)
     steam_id = Column(String(32))  # Мы добавим его позже
     nickname = Column(String(32), nullable=False)
+    sesid = Column(Integer, nullable=False)
     registration_date = Column(DateTime, default=datetime.now)
 
 class Bot(Base):
@@ -35,14 +36,7 @@ class Operation(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, nullable=False)
     opcode = Column(String(64), nullable=False)
+    opcost = Column(Integer)
     
-class Session(Base):
-    __tablename__ = 'sessions'
     
-    id = Column(Integer, primary_key=True)
-    sid = Column(Integer, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))  # Связываем с таблицей users
-
-    user = relationship('User', backref='sessions')  
-
 Base.metadata.create_all(bind=engine)
